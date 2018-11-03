@@ -1,6 +1,7 @@
 'use strict'
 
 const assert = require('assert').strict || require('assert')
+const os = require('os')
 const Pool = require('..')
 
 describe('compatible-pool', function () {
@@ -44,5 +45,36 @@ describe('compatible-pool', function () {
 
       assert.deepEqual(destroyed, [1])
     })
+  })
+  it('defaults to os.cpus().length for the max argument', function () {
+    const p = new Pool({ })
+    assert.equal(p.max, os.cpus().length)
+    return p.acquire().then(function (res) {
+      assert.equal(res, null)
+      assert.equal(p.destroy(res), null)
+    })
+  })
+  it('propagates errors from create and destroy functions', function () {
+    let doThrow = false
+    const p = new Pool({
+      create: () => { if (doThrow) throw new Error() },
+      destroy: () => { throw new Error() }
+    })
+
+    return p.acquire()
+      .then(function () {
+        doThrow = true
+        return p.acquire()
+      })
+      .then(function () {
+        assert(false)
+      }, function (e) {
+        return p.clear()
+      })
+      .then(function () {
+        assert(false)
+      }, function() {
+        return null
+      })
   })
 })
