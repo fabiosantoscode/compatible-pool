@@ -23,7 +23,7 @@ class Pool {
     this.destroy = destroy
   }
 
-  async acquire (): Promise<any> {
+  acquire = async (): Promise<any> => {
     if (this.unused.length) {
       return this.unused.pop()
     }
@@ -37,7 +37,7 @@ class Pool {
     return res
   }
 
-  release (res: any) {
+  release = (res: any) => {
     if (this.waitingList.length) {
       this.waitingList.pop()!(res)
       return
@@ -45,8 +45,8 @@ class Pool {
     this.unused.push(res)
   }
 
-  clear () {
-    this.resources.forEach(res => { res.kill() })
+  clear = () => {
+    this.resources.forEach(res => { this.destroy(res) })
   }
 }
 

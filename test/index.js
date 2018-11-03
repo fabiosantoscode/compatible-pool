@@ -19,11 +19,30 @@ describe('compatible-pool', function () {
         setTimeout(function () {
           assert.equal(i, 1)
           p.release(res)
-        }, 100)
+        }, 50)
         return p.acquire()
       })
       .then(function (res) {
         assert.equal(res, 1)
       })
+  })
+  it('pushes to this.unused', function () {
+    let i = 0
+    const destroyed = []
+    const p = new Pool({
+      create: () => ++i,
+      destroy: res => destroyed.push(res),
+      max: 1
+    })
+    p.acquire().then(p.release).then(function () {
+      assert.deepEqual(p.unused, [1])
+      return p.acquire()
+    }).then(function (res) {
+      assert.equal(res, 1, 'res is from this.unused')
+
+      p.clear()
+
+      assert.deepEqual(destroyed, [1])
+    })
   })
 })
