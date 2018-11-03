@@ -1,22 +1,23 @@
-# multiprocess-map
+# compatible-pool
 
-[![Build Status](https://travis-ci.org/fabiosantoscode/multiprocess-map.svg?branch=master)](https://travis-ci.org/fabiosantoscode/multiprocess-map) [![Coverage Status](https://coveralls.io/repos/github/fabiosantoscode/multiprocess-map/badge.svg?branch=master)](https://coveralls.io/github/fabiosantoscode/multiprocess-map?branch=master)
+[![Build Status](https://travis-ci.org/fabiosantoscode/compatible-pool.svg?branch=master)](https://travis-ci.org/fabiosantoscode/compatible-pool) [![Coverage Status](https://coveralls.io/repos/github/fabiosantoscode/compatible-pool/badge.svg?branch=master)](https://coveralls.io/github/fabiosantoscode/compatible-pool?branch=master)
 
 Runs a map function on a set of values. The function will run on as many processors your machine has, or on `max` processes.
 
-## async map(values, fn[,{ max = os.cpus().length, processStdout:(cpStdout) => stdoutModified}])
+## new Pool({ max: number, create: async () => res, destroy: res => (destroys res) })
 
-Returns a promise for the mapped array.
+ - max: maximum number of parallel processes
+ - create: return your resource here as a promise
+ - destroy: destroy your resource
 
-Use `processStdout` option to process the stdout before multiprocess-map prints it to the console. Do this if the stdout is too verbose, for example.
+## pool.acquire() -> Promise<res>
 
-```javascript
-const map = require('multiprocess-map')  // Works with node 0.10 -> 10
+Aquire a resource from the pool. This can take longer if the maximum number of processes has been reached.
 
-async function main() {
-  await map([1,2], (value, cb) => setTimeout(cb, 100))
+## pool.release(res)
 
-  await map([1, 2], async value => await foo(value))
-}
-```
+Release a resource in the pool.
 
+## pool.clear()
+
+Clear everything in the pool.

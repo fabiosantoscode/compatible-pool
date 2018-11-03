@@ -1,38 +1,29 @@
 'use strict'
 
-var assert = require('assert').strict || require('assert')
-var Mocha = require('mocha')
-var map = require('..')
+const assert = require('assert').strict || require('assert')
+const Pool = require('..')
 
-Mocha.describe('multiprocess-map', function () {
-  Mocha.it('orders stdout properly', function () {
-    this.timeout(10 * 1000)
-    return map([3000, 2000, 1000], function (ms, i) {
-      return new (require('es6-promise'))(function (resolve) {
+describe('compatible-pool', function () {
+  it('can acquire and release resources', function () {
+    let i = 0
+    const p = new Pool({
+      create: () => ++i,
+      destroy: () => null,
+      max: 1
+    })
+
+    return p.acquire()
+      .then(function (res) {
+        assert.equal(res, 1)
+
         setTimeout(function () {
-          console.log(i)
-          resolve()
-        }, ms)
+          assert.equal(i, 1)
+          p.release(res)
+        }, 100)
+        return p.acquire()
       })
-    })
-  })
-  Mocha.it('runs sync map functions', function () {
-    return map([1, 2, 3], function (n) {
-      console.log(n * 2)
-      return n * 2
-    }).then(function (values) {
-      assert.deepEqual(values, [2, 4, 6])
-    })
-  })
-  Mocha.it('can process stdout', function () {
-    return map([1, 2], function (value) {
-      console.log(value)
-      return value * 2
-    }, {
-      max: 1,
-      processStdout: function (stdout) {
-        return stdout.replace(/\n$/gm, '') + '0\n'
-      }
-    })
+      .then(function (res) {
+        assert.equal(res, 1)
+      })
   })
 })
