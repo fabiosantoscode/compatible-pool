@@ -7,6 +7,7 @@
   "scripts": {
     "prepare": "tsc --declaration",
     "test": "npm run prepare --silent && istanbul cover ./node_modules/.bin/_mocha && coveralls < coverage/lcov.info",
+    "lint": "tslint 'src/**/*.ts'",
     "precommit": "npm run test --silent"
   },
   "files": [
@@ -28,6 +29,8 @@
     "istanbul": "^1.1.0-alpha.1",
     "mocha": "^3.0.0",
     "murmurhash": "0.0.2",
+    "tslint": "^5.11.0",
+    "tslint-config-standard": "^8.0.1",
     "typescript": "^3.1.6"
   },
   "dependencies": {

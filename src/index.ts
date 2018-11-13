@@ -13,7 +13,7 @@ class Pool {
   unused: Array<any> = []
   waitingList: Array<(res: any) => void> = []
 
-  constructor({
+  constructor ({
     max = os.cpus().length,
     create = () => Promise.resolve(null),
     destroy = () => null
