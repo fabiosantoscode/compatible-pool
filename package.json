@@ -8,7 +8,7 @@
     "prepare": "tsc --declaration",
     "test": "npm run prepare --silent && istanbul cover ./node_modules/.bin/_mocha && coveralls < coverage/lcov.info",
     "lint": "tslint 'src/**/*.ts'",
-    "precommit": "npm run test --silent"
+    "precommit": "npm run lint --silent && npm run test --silent"
   },
   "files": [
     "lib"
